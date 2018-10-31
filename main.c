@@ -48,8 +48,8 @@ int main(int argc, char** argv) {
         char* str ="Blau";
         melon_add_string(&m, str, strlen( str ) );
         size_t str_len;
-        printf("str == %s\n", ( strcmp( melon_get_string( &m, str_len ), str ) == 0 ? "YES" : "NO"));
-    }
+        printf("str == %s\n", ( strcmp( melon_get_string( &m, &str_len ), str ) == 0 ? "YES" : "NO"));
+    } 
 
     melon_delete(&m);
 
