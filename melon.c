@@ -1,11 +1,5 @@
 #include "melon.h"
 
-#define MELON_UINT8_ID (0x01)
-#define MELON_UINT8_SIZE (1)
-
-#define MELON_INT8_ID (0x02)
-#define MELON_INT8_SIZE (1)
-
 bool melon_alloc( melon*, size_t );
 uint8_t melon_get_data_id( melon* );
 
@@ -46,6 +40,9 @@ uint8_t melon_get_data_id( melon* m ) {
  */
 
 /* uint8 */
+#define MELON_UINT8_ID (0x01)
+#define MELON_UINT8_SIZE (1)
+
 bool melon_add_uint8( melon* m, uint8_t n ) {
     if(!melon_alloc( m, 1 /* datatype size */ + n )) {
         return false;
@@ -72,6 +69,9 @@ uint8_t melon_get_uint8( melon* m ) {
 }
 
 /* int8 */
+#define MELON_INT8_ID (0x02)
+#define MELON_INT8_SIZE (1)
+
 bool melon_add_int8( melon* m, int8_t n ) {
     if(!melon_alloc( m, 1 /* datatype size */ + n )) {
         return false;
@@ -95,4 +95,74 @@ int8_t melon_get_int8( melon* m ) {
     }
     
     return ( m->buffer[ m->read_offset++ ] );
+}
+
+/* uint16 */
+#define MELON_UINT16_ID (0x03)
+#define MELON_UINT16_SIZE (2)
+
+bool melon_add_uint16( melon* m, uint16_t n ) {
+    if(!melon_alloc( m, 1 /* datatype size */ + n )) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_UINT16_ID;
+    memcpy( m->buffer + m->write_offset, &n, MELON_UINT16_SIZE ); 
+    m->write_offset += MELON_UINT16_SIZE;
+    
+    m->size += MELON_UINT16_SIZE;
+    
+    return true;
+}
+
+uint16_t melon_get_uint16( melon* m ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_UINT16_ID) {
+        return 0;
+    }
+    
+    uint16_t n;
+    memcpy( &n, m->buffer + m->read_offset, MELON_UINT16_SIZE ); 
+    
+    m->read_offset += MELON_UINT16_SIZE;
+    
+    return ( n );
+}
+
+/* int16 */
+#define MELON_INT16_ID (0x04)
+#define MELON_INT16_SIZE (2)
+
+bool melon_add_int16( melon* m, int16_t n ) {
+    if(!melon_alloc( m, 1 /* datatype size */ + n )) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_INT16_ID;
+    memcpy( m->buffer + m->write_offset, &n, MELON_INT16_SIZE ); 
+    m->write_offset += MELON_INT16_SIZE;
+    
+    m->size += MELON_INT16_SIZE;
+    
+    return true;
+}
+
+int16_t melon_get_int16( melon* m ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_INT16_ID) {
+        return 0;
+    }
+    
+    uint16_t n;
+    memcpy( &n, m->buffer + m->read_offset, MELON_INT16_SIZE ); 
+    
+    m->read_offset += MELON_INT16_SIZE;
+    
+    return ( n );
 }

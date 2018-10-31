@@ -2,6 +2,8 @@
 #define MELON_H
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h> // memcpy
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -12,19 +14,25 @@ extern "C" {
     typedef struct melon_t {
         char* buffer;
         size_t size;
-        
+
         uint8_t write_offset;
         uint8_t read_offset;
     } melon;
-    
+
     melon melon_create();
-    void melon_delete( melon* );
+    void melon_delete(melon*);
+
+    bool melon_add_uint8(melon*, uint8_t);
+    uint8_t melon_get_uint8(melon*);
+
+    bool melon_add_int8(melon*, int8_t);
+    int8_t melon_get_int8(melon*);
     
-    bool melon_add_uint8( melon*, uint8_t );
-    uint8_t melon_get_uint8( melon* );
+    bool melon_add_uint16(melon*, uint16_t);
+    uint16_t melon_get_uint16(melon*);
     
-     bool melon_add_int8( melon*, int8_t );
-    int8_t melon_get_int8( melon* );
+    bool melon_add_int16(melon*, int16_t);
+    int16_t melon_get_int16(melon*);
 
 
 #ifdef __cplusplus
