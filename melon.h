@@ -22,6 +22,9 @@ extern "C" {
     
     bool melon_add_uint8( melon*, uint8_t );
     uint8_t melon_get_uint8( melon* );
+    
+     bool melon_add_int8( melon*, int8_t );
+    int8_t melon_get_int8( melon* );
 
 
 #ifdef __cplusplus

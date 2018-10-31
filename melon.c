@@ -3,6 +3,9 @@
 #define MELON_UINT8_ID (0x01)
 #define MELON_UINT8_SIZE (1)
 
+#define MELON_INT8_ID (0x02)
+#define MELON_INT8_SIZE (1)
+
 bool melon_alloc( melon*, size_t );
 uint8_t melon_get_data_id( melon* );
 
@@ -38,6 +41,11 @@ uint8_t melon_get_data_id( melon* m ) {
     return ( m->buffer[ m->read_offset++ ] );
 }
 
+/*
+    (DE)SERIALIZATION
+ */
+
+/* uint8 */
 bool melon_add_uint8( melon* m, uint8_t n ) {
     if(!melon_alloc( m, 1 /* datatype size */ + n )) {
         return false;
@@ -57,6 +65,32 @@ uint8_t melon_get_uint8( melon* m ) {
     }
 
     if(melon_get_data_id( m ) != MELON_UINT8_ID) {
+        return 0;
+    }
+    
+    return ( m->buffer[ m->read_offset++ ] );
+}
+
+/* int8 */
+bool melon_add_int8( melon* m, int8_t n ) {
+    if(!melon_alloc( m, 1 /* datatype size */ + n )) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_INT8_ID;
+    m->buffer[ m->write_offset++ ] = n;
+    
+    m->size += MELON_INT8_SIZE;
+    
+    return true;
+}
+
+int8_t melon_get_int8( melon* m ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_INT8_ID) {
         return 0;
     }
     
