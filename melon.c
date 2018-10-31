@@ -236,3 +236,46 @@ int32_t melon_get_int32( melon* m ) {
     
     return ( n );
 }
+
+/* string */
+#define MELON_STRING_ID (0x07)
+
+bool melon_add_string( melon* m, char* str, size_t len ) {
+    if(!melon_alloc( m,  1 /* datatype size */)) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_STRING_ID;
+    melon_add_uint32( m, len );
+    
+    if(!melon_alloc( m,  len /* string length */)) {
+        return false;
+    }
+    
+    memcpy( m->buffer + m->write_offset, str, len ); 
+    m->write_offset += len;
+    
+    m->size += ( len );
+    
+    return true;
+}
+
+char* melon_get_string( melon* m, size_t string_length ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_STRING_ID) {
+        return 0;
+    }
+    
+    string_length = melon_get_uint32( m );
+
+    char* str = (char*) calloc( string_length + 1, sizeof(char) );
+    
+    for(int i = 0; i < string_length; i++) {
+        str[i] = m->buffer[ m->read_offset++ ];
+    }
+
+    return ( str );
+}
