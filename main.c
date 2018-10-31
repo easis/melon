@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     }
     
     {
-        uint16_t u16 =-1337;
+        uint16_t u16 = -1337;
         melon_add_uint16(&m, u16);
         printf("uint16_t == %s\n", (u16 == melon_get_uint16(&m) ? "YES" : "NO"));
     }
@@ -30,6 +30,18 @@ int main(int argc, char** argv) {
         int16_t i16 =1337;
         melon_add_int16(&m, i16);
         printf("int16_t == %s\n", (i16 == melon_get_int16(&m) ? "YES" : "NO"));
+    }
+    
+    {
+        uint32_t u32= -13371337;
+        melon_add_uint32(&m, u32);
+        printf("uint32_t == %s\n", (u32 == melon_get_uint32(&m) ? "YES" : "NO"));
+    }
+    
+    {
+        int32_t i32 =13371337;
+        melon_add_int32(&m, i32);
+        printf("int32_t == %s\n", (i32 == melon_get_int32(&m) ? "YES" : "NO"));
     }
 
     melon_delete(&m);

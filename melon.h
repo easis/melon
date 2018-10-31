@@ -33,6 +33,12 @@ extern "C" {
     
     bool melon_add_int16(melon*, int16_t);
     int16_t melon_get_int16(melon*);
+    
+    bool melon_add_uint32(melon*, uint32_t);
+    uint32_t melon_get_uint32(melon*);
+    
+    bool melon_add_int32(melon*, int32_t);
+    int32_t melon_get_int32(melon*);
 
 
 #ifdef __cplusplus

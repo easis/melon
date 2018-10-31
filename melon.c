@@ -159,10 +159,80 @@ int16_t melon_get_int16( melon* m ) {
         return 0;
     }
     
-    uint16_t n;
+    int16_t n;
     memcpy( &n, m->buffer + m->read_offset, MELON_INT16_SIZE ); 
     
     m->read_offset += MELON_INT16_SIZE;
+    
+    return ( n );
+}
+
+/* uint32 */
+#define MELON_UINT32_ID (0x05)
+#define MELON_UINT32_SIZE (4)
+
+bool melon_add_uint32( melon* m, uint32_t n ) {
+    if(!melon_alloc( m, 1 /* datatype size */ + n )) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_UINT32_ID;
+    memcpy( m->buffer + m->write_offset, &n, MELON_UINT32_SIZE ); 
+    m->write_offset += MELON_UINT32_SIZE;
+    
+    m->size += MELON_UINT32_SIZE;
+    
+    return true;
+}
+
+uint32_t melon_get_uint32( melon* m ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_UINT32_ID) {
+        return 0;
+    }
+    
+    uint32_t n;
+    memcpy( &n, m->buffer + m->read_offset, MELON_UINT32_SIZE ); 
+    
+    m->read_offset += MELON_UINT32_SIZE;
+    
+    return ( n );
+}
+
+/* int32 */
+#define MELON_INT32_ID (0x06)
+#define MELON_INT32_SIZE (4)
+
+bool melon_add_int32( melon* m, int32_t n ) {
+    if(!melon_alloc( m, 1 /* datatype size */ + n )) {
+        return false;
+    }
+    
+    m->buffer[ m->write_offset++ ] = MELON_INT32_ID;
+    memcpy( m->buffer + m->write_offset, &n, MELON_INT32_SIZE ); 
+    m->write_offset += MELON_INT32_SIZE;
+    
+    m->size += MELON_INT32_SIZE;
+    
+    return true;
+}
+
+int32_t melon_get_int32( melon* m ) {
+    if(!m->buffer || m->size <= 0) {
+        return 0;
+    }
+
+    if(melon_get_data_id( m ) != MELON_INT32_ID) {
+        return 0;
+    }
+    
+    int32_t n;
+    memcpy( &n, m->buffer + m->read_offset, MELON_INT32_SIZE ); 
+    
+    m->read_offset += MELON_INT32_SIZE;
     
     return ( n );
 }
