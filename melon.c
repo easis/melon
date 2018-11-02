@@ -27,7 +27,7 @@ bool melon_alloc( melon* m, size_t n ) {
     if (m->buffer) {
         m->buffer = realloc(m->buffer, m->size + n);
     } else {
-        m->buffer = malloc(0);
+        m->buffer = malloc(n);
     }
 
     return ( m->buffer);
@@ -271,7 +271,7 @@ int32_t melon_get_int32( melon* m ) {
 
 bool melon_add_string( melon* m, char* str, uint32_t len ) {
     melon_set_data_id(m, MELON_STRING_ID);
-    
+
     if (!melon_alloc(m, MELON_UINT32_SIZE + len)) {
         return false;
     }

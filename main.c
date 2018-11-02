@@ -5,9 +5,9 @@
 #include "melon.h"
 
 int main( int argc, char** argv ) {
-
     melon m = melon_create();
-    m.use_id = true;
+    m.use_id = false;
+    
     {
         uint8_t u8 = -72;
         melon_add_uint8(&m, u8);
