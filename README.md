@@ -62,4 +62,3 @@ Output:
 size of container is 27 bytes
 ```
 4 bytes (string length) + 22 bytes (string) + 1 byte (int8 value) = 27 bytes
-```
