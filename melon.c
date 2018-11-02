@@ -1,28 +1,29 @@
 #include "melon.h"
 
-bool melon_alloc(melon*, size_t);
-uint8_t melon_get_data_id(melon*);
-void melon_set_data_id(melon*, uint8_t);
+bool melon_alloc( melon*, size_t );
+bool melon_is_data_id( melon*, uint8_t );
+void melon_set_data_id( melon*, uint8_t );
 
-melon melon_create() {
+melon melon_create( ) {
     melon m;
 
     m.buffer = 0;
     m.size = 0;
     m.write_offset = 0;
     m.read_offset = 0;
+    m.use_id = true;
 
     return m;
 }
 
-void melon_delete(melon* m) {
+void melon_delete( melon* m ) {
     free(m->buffer);
     m->size = 0;
     m->read_offset = 0;
     m->write_offset = 0;
 }
 
-bool melon_alloc(melon* m, size_t n) {
+bool melon_alloc( melon* m, size_t n ) {
     if (m->buffer) {
         m->buffer = realloc(m->buffer, m->size + n);
     } else {
@@ -32,17 +33,29 @@ bool melon_alloc(melon* m, size_t n) {
     return ( m->buffer);
 }
 
-uint8_t melon_get_data_id(melon* m) {
-    return ( m->buffer[ m->read_offset++ ]);
-}
-
-void melon_set_data_id(melon* m, uint8_t data_id) {
-    if (!melon_alloc(m, 1 /* datatype size */)) {
-        return;
+bool melon_is_data_id( melon* m, uint8_t data_id ) {
+    if (!m->use_id) {
+        return true;
     }
 
-    m->buffer[ m->write_offset++ ] = data_id;
-    m->size++;
+    uint32_t temp_offset = m->read_offset;
+    if (m->buffer[ temp_offset ] == data_id) {
+        m->read_offset++;
+        return true;
+    }
+
+    return false;
+}
+
+void melon_set_data_id( melon* m, uint8_t data_id ) {
+    if (m->use_id) {
+        if (!melon_alloc(m, 1)) {
+            return;
+        }
+
+        m->buffer[ m->write_offset++ ] = data_id;
+        m->size++;
+    }
 }
 
 /*
@@ -53,7 +66,7 @@ void melon_set_data_id(melon* m, uint8_t data_id) {
 #define MELON_UINT8_ID (0x01)
 #define MELON_UINT8_SIZE (1)
 
-bool melon_add_uint8(melon* m, uint8_t n) {
+bool melon_add_uint8( melon* m, uint8_t n ) {
     melon_set_data_id(m, MELON_UINT8_ID);
 
     if (!melon_alloc(m, n)) {
@@ -67,12 +80,12 @@ bool melon_add_uint8(melon* m, uint8_t n) {
     return true;
 }
 
-uint8_t melon_get_uint8(melon* m) {
+uint8_t melon_get_uint8( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_UINT8_ID) {
+    if (!melon_is_data_id(m, MELON_UINT8_ID)) {
         return 0;
     }
 
@@ -83,7 +96,7 @@ uint8_t melon_get_uint8(melon* m) {
 #define MELON_INT8_ID (0x02)
 #define MELON_INT8_SIZE (1)
 
-bool melon_add_int8(melon* m, int8_t n) {
+bool melon_add_int8( melon* m, int8_t n ) {
     melon_set_data_id(m, MELON_INT8_ID);
 
     if (!melon_alloc(m, MELON_INT8_SIZE)) {
@@ -97,12 +110,12 @@ bool melon_add_int8(melon* m, int8_t n) {
     return true;
 }
 
-int8_t melon_get_int8(melon* m) {
+int8_t melon_get_int8( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_INT8_ID) {
+    if (!melon_is_data_id(m, MELON_INT8_ID)) {
         return 0;
     }
 
@@ -113,7 +126,7 @@ int8_t melon_get_int8(melon* m) {
 #define MELON_UINT16_ID (0x03)
 #define MELON_UINT16_SIZE (2)
 
-bool melon_add_uint16(melon* m, uint16_t n) {
+bool melon_add_uint16( melon* m, uint16_t n ) {
     melon_set_data_id(m, MELON_UINT16_ID);
 
     if (!melon_alloc(m, MELON_UINT16_SIZE)) {
@@ -128,12 +141,12 @@ bool melon_add_uint16(melon* m, uint16_t n) {
     return true;
 }
 
-uint16_t melon_get_uint16(melon* m) {
+uint16_t melon_get_uint16( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_UINT16_ID) {
+    if (!melon_is_data_id(m, MELON_UINT16_ID)) {
         return 0;
     }
 
@@ -149,7 +162,7 @@ uint16_t melon_get_uint16(melon* m) {
 #define MELON_INT16_ID (0x04)
 #define MELON_INT16_SIZE (2)
 
-bool melon_add_int16(melon* m, int16_t n) {
+bool melon_add_int16( melon* m, int16_t n ) {
     melon_set_data_id(m, MELON_INT16_ID);
 
     if (!melon_alloc(m, MELON_INT16_SIZE)) {
@@ -164,12 +177,12 @@ bool melon_add_int16(melon* m, int16_t n) {
     return true;
 }
 
-int16_t melon_get_int16(melon* m) {
+int16_t melon_get_int16( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_INT16_ID) {
+    if (!melon_is_data_id(m, MELON_INT16_ID)) {
         return 0;
     }
 
@@ -185,7 +198,7 @@ int16_t melon_get_int16(melon* m) {
 #define MELON_UINT32_ID (0x05)
 #define MELON_UINT32_SIZE (4)
 
-bool melon_add_uint32(melon* m, uint32_t n) {
+bool melon_add_uint32( melon* m, uint32_t n ) {
     melon_set_data_id(m, MELON_UINT32_ID);
 
     if (!melon_alloc(m, MELON_UINT32_SIZE)) {
@@ -200,12 +213,12 @@ bool melon_add_uint32(melon* m, uint32_t n) {
     return true;
 }
 
-uint32_t melon_get_uint32(melon* m) {
+uint32_t melon_get_uint32( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_UINT32_ID) {
+    if (!melon_is_data_id(m, MELON_UINT32_ID)) {
         return 0;
     }
 
@@ -221,7 +234,7 @@ uint32_t melon_get_uint32(melon* m) {
 #define MELON_INT32_ID (0x06)
 #define MELON_INT32_SIZE (4)
 
-bool melon_add_int32(melon* m, int32_t n) {
+bool melon_add_int32( melon* m, int32_t n ) {
     melon_set_data_id(m, MELON_INT32_ID);
 
     if (!melon_alloc(m, MELON_INT32_SIZE)) {
@@ -236,12 +249,12 @@ bool melon_add_int32(melon* m, int32_t n) {
     return true;
 }
 
-int32_t melon_get_int32(melon* m) {
+int32_t melon_get_int32( melon* m ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_INT32_ID) {
+    if (!melon_is_data_id(m, MELON_INT32_ID)) {
         return 0;
     }
 
@@ -256,9 +269,9 @@ int32_t melon_get_int32(melon* m) {
 /* string */
 #define MELON_STRING_ID (0x07)
 
-bool melon_add_string(melon* m, char* str, uint32_t len) {
+bool melon_add_string( melon* m, char* str, uint32_t len ) {
     melon_set_data_id(m, MELON_STRING_ID);
-
+    
     if (!melon_alloc(m, MELON_UINT32_SIZE + len)) {
         return false;
     }
@@ -276,12 +289,12 @@ bool melon_add_string(melon* m, char* str, uint32_t len) {
     return true;
 }
 
-char* melon_get_string(melon* m, uint32_t* string_length) {
+char* melon_get_string( melon* m, uint32_t* string_length ) {
     if (!m->buffer || m->size <= 0) {
         return 0;
     }
 
-    if (melon_get_data_id(m) != MELON_STRING_ID) {
+    if (!melon_is_data_id(m, MELON_STRING_ID)) {
         return 0;
     }
 

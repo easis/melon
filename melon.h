@@ -17,6 +17,8 @@ extern "C" {
 
         uint32_t write_offset;
         uint32_t read_offset;
+
+        bool use_id;
     } melon;
 
     melon melon_create();
